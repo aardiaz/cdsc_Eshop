@@ -1,10 +1,13 @@
 package com.cdsc.eshopdemo.serviceimpl;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cdsc.eshopdemo.dto.UserDto;
 import com.cdsc.eshopdemo.entity.User;
 import com.cdsc.eshopdemo.repository.UserRepository;
 import com.cdsc.eshopdemo.service.UserService;
@@ -13,12 +16,19 @@ import com.cdsc.eshopdemo.service.UserService;
 public class UserServiceImpl implements UserService {
 	
 	@Autowired
+	private ModelMapper  modelMapper;
+	
+	@Autowired
 	private UserRepository userRepository;
 
 	@Override
-	public User createUser(User user) {
-		 
-		return userRepository.save(user);
+	public UserDto createUser(UserDto userDto) {
+		
+		 //convert DTO to Entity
+		 User userEntity = modelMapper.map(userDto, User.class);
+		 userEntity = userRepository.save(userEntity);
+		 //convert and return DTO
+		return modelMapper.map(userEntity, UserDto.class);
 	}
 
 	@Override
@@ -28,40 +38,63 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User updateUser(String userId, User user) {
+	public UserDto updateUser(String userId, UserDto userDto) {
 		 
-		userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+		User  user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 		
+		//User userEntity  = modelMapper.map(userDto, User.class);
+		user.setName(userDto.getName());
+		user.setEmail(userDto.getEmail());
+		user.setPassword(userDto.getPassword());
+		user.setPhone(userDto.getPhone());
 		user.setUserId(userId); // Ensure the user ID is set for the update
-		return userRepository.save(user);
+		user.setGender(userDto.getGender());
+		
+		User userEntity= userRepository.save(user);
+		
+		//userEntity.setUserId(userId); // Ensure the user ID is set for the update
+		return modelMapper.map(userEntity, UserDto.class);
 	}
 
 	@Override
-	public List<User> getAllUsers() {
+	public List<UserDto> getAllUsers() {
+		
+		List<User>  userList = userRepository.findAll();
 		 
-		return userRepository.findAll();
+		//convert List<User> to List<UserDto>
+		List<UserDto> userDtoList= userList.stream().map(user -> modelMapper.map(user, UserDto.class)).toList();
+		
+		return userDtoList;
 	}
 
 	@Override
-	public User getUserById(String userId) {
+	public UserDto getUserById(String userId) {
 		 
 		User u = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
-		return u;
+		return modelMapper.map(u, UserDto.class);
 	}
 
 	@Override
-	public User getUserByEmail(String email) {
+	public UserDto getUserByEmail(String email) {
 		
 		 User u = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found with email: " + email));
 		
-		return u;
+		return modelMapper.map(u, UserDto.class);
 	}
 
 	@Override
-	public List<User> searchUsersByName(String name) {
+	public List<UserDto> searchUsersByName(String name) {
 		
 		List<User> ulist = userRepository.findByNameContainingIgnoreCase(name);
-		return ulist;
+//		List<UserDto> userDtoList = new ArrayList<>();
+//		for (User u : ulist) {
+//		          UserDto userDto = modelMapper.map(u, UserDto.class);  	
+//		          userDtoList.add(userDto);
+//		        }
+		
+		  List<UserDto> userDtoList= ulist.stream().map(user -> modelMapper.map(user, UserDto.class)).toList();
+		
+		return userDtoList;
 	}
 	
 	

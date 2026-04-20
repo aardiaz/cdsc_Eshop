@@ -2,29 +2,30 @@ package com.cdsc.eshopdemo.service;
 
 import java.util.List;
 
+import com.cdsc.eshopdemo.dto.UserDto;
 import com.cdsc.eshopdemo.entity.User;
 
 public interface UserService {
 
 	// create
-	User createUser(User user);
+	UserDto createUser(UserDto user);
 
 	// delete user
 	void deleteUser(String userId);
 
 	// update
-	User updateUser(String userId, User user);
+	UserDto updateUser(String userId, UserDto user);
 
 	// get all users
-	List<User> getAllUsers();
+	List<UserDto> getAllUsers();
 
 	// get one user
-	User getUserById(String userId);
+	UserDto getUserById(String userId);
 
 	// get by email
-	User getUserByEmail(String email);
+	UserDto getUserByEmail(String email);
 
 	// search users by name
-	List<User> searchUsersByName(String name);
+	List<UserDto> searchUsersByName(String name);
 
 }
