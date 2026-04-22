@@ -19,6 +19,8 @@ import com.cdsc.eshopdemo.dto.UserDto;
 import com.cdsc.eshopdemo.entity.User;
 import com.cdsc.eshopdemo.service.UserService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -27,7 +29,7 @@ public class UserController {
 	private UserService userService;
 	
 	@PostMapping("/add")
-	public ResponseEntity<UserDto> addUser(@RequestBody UserDto user) {
+	public ResponseEntity<UserDto> addUser(@Valid @RequestBody UserDto user) {
 		
 		user.setUserId(UUID.randomUUID().toString()); // Generate a random UUID for user IDl)
 		UserDto u = userService.createUser(user);
