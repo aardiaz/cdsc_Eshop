@@ -13,10 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cdsc.eshopdemo.dto.PageableResponse;
 import com.cdsc.eshopdemo.dto.UserDto;
-import com.cdsc.eshopdemo.entity.User;
 import com.cdsc.eshopdemo.service.UserService;
 
 import jakarta.validation.Valid;
@@ -38,10 +39,15 @@ public class UserController {
 	}
 	
 	@GetMapping
-	public ResponseEntity<List<UserDto>>  getAllUsers() {
-		
-		return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
-	}
+	public  ResponseEntity<PageableResponse<UserDto>> getAllUsers(
+            @RequestParam(value = "pageNumber", defaultValue = "0",required = false) int pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = "name", required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = "asc", required 
+            = false) String sortDir
+    ) {
+        return new ResponseEntity<>(userService.getAllUsers(pageNumber, pageSize, sortBy, sortDir), HttpStatus.OK);
+    }
 	
 	@GetMapping("/{userId}")
 	public ResponseEntity<UserDto> getSingleUser(@PathVariable("userId") String userId) {
