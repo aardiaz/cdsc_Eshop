@@ -1,11 +1,16 @@
 package com.cdsc.eshopdemo.serviceimpl;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.cdsc.eshopdemo.dto.CategoryDto;
@@ -50,9 +55,12 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.delete(category);
 	}
 
+	
 	@Override
 	public PageableResponse<CategoryDto> getAll(int pageNumber, int pageSize, String sortBy, String sortDir) {
 		 
+		System.out.println("======== get all active =======");
+		
 		 Sort sort = (sortDir.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending()) : (Sort.by(sortBy).ascending());
 	        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
 	        Page<Category> page = categoryRepository.findAll(pageable);
@@ -65,5 +73,12 @@ public class CategoryServiceImpl implements CategoryService {
 		Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category not found with given id !!"));
         return modelMapper.map(category, CategoryDto.class);
 	}
+	
+	@Scheduled(cron = "0 */2 * * * ?")
+	public List<Category> test() {
+		 System.out.println("------- running test method -------"+LocalTime.now());
+	        return categoryRepository.findAll();
+	}
 
+	
 }

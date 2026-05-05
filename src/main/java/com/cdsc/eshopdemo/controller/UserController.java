@@ -20,16 +20,21 @@ import com.cdsc.eshopdemo.dto.PageableResponse;
 import com.cdsc.eshopdemo.dto.UserDto;
 import com.cdsc.eshopdemo.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/users")
+@Tag(name = "User Management", description = "APIs for managing users in the e-commerce application")
 public class UserController {
 	
 	@Autowired
 	private UserService userService;
 	
 	@PostMapping("/add")
+	@Operation(summary = "added user in db",description = "Create a new user in the e-commerce application")
 	public ResponseEntity<UserDto> addUser(@Valid @RequestBody UserDto user) {
 		
 		user.setUserId(UUID.randomUUID().toString()); // Generate a random UUID for user IDl)
